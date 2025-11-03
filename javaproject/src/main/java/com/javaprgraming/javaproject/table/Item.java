@@ -1,12 +1,11 @@
-package com.javaprgraming.javaproject;
+package com.javaprgraming.javaproject.table;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
-@Entity
+import jakarta.persistence.Entity;
+@Entity 
 public class Item {
-
-    @Id
+ @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -98,11 +97,4 @@ public class Item {
     public void setSeller(User seller) {
         this.seller = seller;
     }
-}
-
-// 물건 상태를 나타내는 Enum (정해진 값만 사용하도록 강제하여 실수를 방지합니다)
-enum ItemStatus {
-    ON_AUCTION, // 경매중
-    SOLD,       // 판매완료
-    CANCELLED   // 판매취소
 }

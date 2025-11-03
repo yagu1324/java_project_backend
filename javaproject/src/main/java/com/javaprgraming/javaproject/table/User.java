@@ -1,4 +1,4 @@
-package com.javaprgraming.javaproject;
+package com.javaprgraming.javaproject.table;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +25,9 @@ public class User {
     // 회원의 생년월일
     private LocalDate birthdate;
     
+    //전화번호
+    private String email;
+
     // 회원이 가진 포인트 (경매에 사용될 돈)
     private Long points = 0L; // 기본값으로 0을 설정합니다.
 
@@ -68,5 +71,12 @@ public class User {
 
     public void setPoints(Long points) {
         this.points = points;
+    }
+    public String getemail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

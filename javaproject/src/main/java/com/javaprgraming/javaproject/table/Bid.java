@@ -1,7 +1,8 @@
-package com.javaprgraming.javaproject;
-
+package com.javaprgraming.javaproject.table;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.javaprgraming.javaproject.table.User;
+import com.javaprgraming.javaproject.table.Item;
 
 @Entity
 public class Bid {
