@@ -1,3 +1,5 @@
+// yagu1324/java_project_backend/java_project_backend-main/javaproject/src/main/java/com/javaprgraming/javaproject/controller/ItemController.java
+
 package com.javaprgraming.javaproject.controller;
 
 import com.javaprgraming.javaproject.repository.ItemRepository;
@@ -6,23 +8,28 @@ import com.javaprgraming.javaproject.table.Item;
 import com.javaprgraming.javaproject.table.ItemStatus;
 import com.javaprgraming.javaproject.table.User;
 
+// ======== ⭐ [시작] Cloudinary 관련 Import 추가 ========
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils; // Cloudinary 업로드 옵션용
+// ======== ⭐ [끝] Cloudinary 관련 Import 추가 ========
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+// import java.nio.file.Files; // <-- Cloudinary 사용 시 더 이상 필요 없음
+// import java.nio.file.Path;  // <-- Cloudinary 사용 시 더 이상 필요 없음
+// import java.nio.file.Paths; // <-- Cloudinary 사용 시 더 이상 필요 없음
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime; // ⭐ [추가]
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/auctions") // '/api/auctions'로 시작하는 모든 요청을 처리
+@RequestMapping("/api/auctions")
 public class ItemController {
 
     @Autowired
@@ -31,18 +38,28 @@ public class ItemController {
     @Autowired
     private UserRepository userRepository;
 
-    private final Path rootLocation = Paths.get("uploads");
+    // ======== ⭐ [시작] Cloudinary 객체 주입 ========
+    // 4단계(CloudinaryConfig)에서 @Bean으로 등록한 객체를 주입받습니다.
+    @Autowired
+    private Cloudinary cloudinary;
+    // ======== ⭐ [끝] Cloudinary 객체 주입 ========
+
+
+    // ======== ⭐ [시작] 로컬 폴더 생성 로직 삭제 ========
+    // private final Path rootLocation = Paths.get("uploads"); // <-- Cloudinary 사용 시 삭제
 
     public ItemController() {
-        try {
-            Files.createDirectories(rootLocation);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not initialize storage", e);
-        }
+        // try {
+        //     Files.createDirectories(rootLocation); // <-- Cloudinary 사용 시 삭제
+        // } catch (IOException e) {
+        //     throw new RuntimeException("Could not initialize storage", e);
+        // }
     }
+    // ======== ⭐ [끝] 로컬 폴더 생성 로직 삭제 ========
+
 
     /**
-     * 경매 등록 (이미지 파일 처리 포함)
+     * 경매 등록 (Cloudinary 이미지 업로드 처리 포함)
      * POST /api/auctions/register
      */
     @PostMapping("/register")
@@ -53,7 +70,7 @@ public class ItemController {
             @RequestParam("startingPrice") Long startingPrice,
             @RequestParam(value = "buyNowPrice", required = false) Long buyNowPrice,
             @RequestParam("bidIncrement") Long bidIncrement,
-            @RequestParam("endTime") String endTimeString, // ⭐ [수정] "duration" 대신 "endTime"
+            @RequestParam("endTime") String endTimeString,
             @RequestParam("sellerId") Long sellerId,
             @RequestParam(value = "image", required = false) MultipartFile imageFile
     ) {
@@ -66,31 +83,41 @@ public class ItemController {
             Item item = new Item();
             item.setName(title);
             item.setCategory(category);
-            item.setDescription(description); 
+            item.setDescription(description);
             item.setStartPrice(startingPrice);
-            item.setCurrentPrice(startingPrice); 
+            item.setCurrentPrice(startingPrice);
             item.setBuyNowPrice(buyNowPrice);
             item.setBidIncrement(bidIncrement);
-            
-            // ⭐ [수정] 'Z'가 붙은 시간(ZonedDateTime)을 일반 시간(LocalDateTime)으로 변환
+
             ZonedDateTime zdt = ZonedDateTime.parse(endTimeString);
-            item.setAuctionEndTime(zdt.toLocalDateTime()); 
-            
+            item.setAuctionEndTime(zdt.toLocalDateTime());
+
             item.setStatus(ItemStatus.ON_AUCTION);
             item.setSeller(seller);
-            
-            // ⭐ [수정] DB 오류 해결
-            item.setSellerUsername(seller.getUsername()); 
+            item.setSellerUsername(seller.getUsername());
 
-            // 이미지 파일 처리
+            // ======== ⭐ [시작] Cloudinary 이미지 업로드 로직으로 변경 ========
             if (imageFile != null && !imageFile.isEmpty()) {
-                String originalFilename = imageFile.getOriginalFilename();
-                String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
-                Files.copy(imageFile.getInputStream(), this.rootLocation.resolve(uniqueFilename));
-                item.setImageUrl("/uploads/" + uniqueFilename);
+
+                // 1. (핵심) Cloudinary로 파일 업로드
+                // (파일의 바이트, "resource_type", "auto" 옵션)
+                // "resource_type", "auto"는 이미지, 비디오 등을 자동으로 감지하라는 의미입니다.
+                Map uploadResult = cloudinary.uploader().upload(
+                    imageFile.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto")
+                );
+
+                // 2. (핵심) 업로드 성공 후, 반환된 '보안 URL'(https)을 가져옵니다.
+                // Cloudinary는 "url"(http)과 "secure_url"(https)을 반환합니다.
+                String imageUrl = uploadResult.get("secure_url").toString();
+                
+                // 3. DB에 Cloudinary의 https URL을 저장합니다.
+                item.setImageUrl(imageUrl);
+
             } else {
-                item.setImageUrl(null); 
+                item.setImageUrl(null); // 이미지가 없으면 null
             }
+            // ======== ⭐ [끝] Cloudinary 이미지 업로드 로직으로 변경 ========
 
             itemRepository.save(item);
 
@@ -106,7 +133,7 @@ public class ItemController {
     }
 
     /**
-     * 메인 페이지 경매 목록
+     * 메인 페이지 경매 목록 (기존과 동일)
      * GET /api/auctions
      */
     @GetMapping
