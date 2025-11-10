@@ -3,34 +3,44 @@ package com.javaprgraming.javaproject.table;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
+
 @Entity 
 public class Item {
- @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 물건 이름
     private String name;
     
-    // 물건 카테고리
+    // ⭐ [추가] register.html에서 보냄
+    private String description;
+    
     private String category;
     
-    // 물건 상태 (Enum 타입을 문자열 형태로 DB에 저장합니다)
     @Enumerated(EnumType.STRING) 
     private ItemStatus status;
     
-    // 경매 마감 시간
     private LocalDateTime auctionEndTime;
     
-    // 경매 시작 가격
     private Long startPrice;
     
-    // 현재 입찰 가격 (입찰이 들어올 때마다 업데이트 됩니다)
     private Long currentPrice;
     
-    // '다대일' 관계 설정: 여러개의 물품(Item)은 한 명의 판매자(User)에게 속합니다.
+    // ⭐ [추가] register.html에서 보냄
+    private Long buyNowPrice;
+
+    // ⭐ [추가] register.html에서 보냄
+    private Long bidIncrement;
+    
+    // ⭐ [추가] 이미지 경로
+    private String imageUrl;
+
+    // '다대일' 관계: 판매자(User)
     @ManyToOne 
     private User seller;
+
+    // ⭐ [추가] DB 오류 해결용
+    private String sellerUsername;
 
     // --- 이하 Getters and Setters ---
 
@@ -48,6 +58,15 @@ public class Item {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    // ⭐ [추가]
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getCategory() {
@@ -89,6 +108,33 @@ public class Item {
     public void setCurrentPrice(Long currentPrice) {
         this.currentPrice = currentPrice;
     }
+    
+    // ⭐ [추가]
+    public Long getBuyNowPrice() {
+        return buyNowPrice;
+    }
+
+    public void setBuyNowPrice(Long buyNowPrice) {
+        this.buyNowPrice = buyNowPrice;
+    }
+
+    // ⭐ [추가]
+    public Long getBidIncrement() {
+        return bidIncrement;
+    }
+
+    public void setBidIncrement(Long bidIncrement) {
+        this.bidIncrement = bidIncrement;
+    }
+    
+    // ⭐ [추가]
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public User getSeller() {
         return seller;
@@ -96,5 +142,14 @@ public class Item {
 
     public void setSeller(User seller) {
         this.seller = seller;
+    }
+
+    // ⭐ [추가]
+    public String getSellerUsername() {
+        return sellerUsername;
+    }
+
+    public void setSellerUsername(String sellerUsername) {
+        this.sellerUsername = sellerUsername;
     }
 }
