@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상품 등록 - 모의 경매 사이트</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<style>
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 1000px;
+    width: 100%;
+    display: flex;
+    min-height: 600px;
+    overflow: hidden;
+  }
+  .left-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 40px;
+    position: relative;
+  }
+  .left-panel h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  .left-panel p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    text-align: center;
+  }
+  .right-panel {
+    flex: 1;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: block;
+    color: #333;
+  }
+  .form-control {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+  .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.15);
+  }
+  .btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+  }
+  @media (max-width:768px) {
+    .container-card { flex-direction: column; }
+    .left-panel, .right-panel { padding: 40px 30px; }
+  }
+</style>
+</head>
+<body>
+  <div class="container-card">
+    <!-- 왼쪽 패널 -->
+    <div class="left-panel">
+      <h1>상품 등록</h1>
+      <p>판매할 상품 정보를 입력하고 경매를 시작하세요!</p>
+    </div>
+
+    <!-- 오른쪽 패널: 등록 폼 -->
+    <div class="right-panel">
+      <form id="registerForm">
+        <label class="form-label">상품명</label>
+        <input type="text" class="form-control" id="itemName" required>
+
+        <label class="form-label">설명</label>
+        <textarea class="form-control" id="itemDesc" rows="3" required></textarea>
+
+        <label class="form-label">카테고리</label>
+        <select class="form-control" id="itemCategory" required>
+          <option value="">선택하세요</option>
+          <option value="전자제품">전자제품</option>
+          <option value="가구">가구</option>
+          <option value="의류">의류</option>
+        </select>
+
+        <label class="form-label">시작가</label>
+        <input type="number" class="form-control" id="startPrice" required>
+
+        <label class="form-label">즉시 구매가</label>
+        <input type="number" class="form-control" id="buyNowPrice">
+
+        <label class="form-label">입찰 단위</label>
+        <input type="number" class="form-control" id="bidIncrement">
+
+        <label class="form-label">경매 종료일</label>
+        <input type="datetime-local" class="form-control" id="auctionEndTime" required>
+
+        <label class="form-label">이미지 URL</label>
+        <input type="text" class="form-control" id="imageUrl">
+
+        <button type="submit" class="btn-submit">등록하기</button>
+      </form>
+    </div>
+  </div>
+
+<script>
+  const registerForm = document.getElementById('registerForm');
+
+  registerForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const data = {
+      name: document.getElementById('itemName').value,
+      description: document.getElementById('itemDesc').value,
+      category: document.getElementById('itemCategory').value,
+      startPrice: parseInt(document.getElementById('startPrice').value),
+      buyNowPrice: parseInt(document.getElementById('buyNowPrice').value),
+      bidIncrement: parseInt(document.getElementById('bidIncrement').value),
+      auctionEndTime: document.getElementById('auctionEndTime').value,
+      imageUrl: document.getElementById('imageUrl').value
+    };
+
+    // API 연동 전에는 console.log로 확인
+    console.log('상품 등록 데이터:', data);
+
+    // 연동: fetch('/api/items/register', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) })
+    alert('상품 등록 시뮬레이션 완료! (더미 데이터)');
+  });
+</script>
+</body>
+</html>
