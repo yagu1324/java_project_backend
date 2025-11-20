@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>마이페이지 - 모의 경매 사이트</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<style>
+  body {
+    background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .container-card {
+    background:white;
+    border-radius:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    max-width:1000px;
+    width:100%;
+    padding:40px;
+  }
+  h1 { color:#333; margin-bottom:30px; }
+  table { width:100%; margin-bottom:30px; }
+  th, td { text-align:left; padding:10px; }
+  th { background:#667eea; color:white; border-radius:10px; }
+  tr:nth-child(even){background:#f2f2f2;}
+  .btn-refresh {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border:none;
+    color:white;
+    font-weight:700;
+    padding:10px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:all 0.3s;
+  }
+  .btn-refresh:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(102,126,234,0.4);
+  }
+</style>
+</head>
+<body>
+<div class="container-card">
+  <h1>마이페이지</h1>
+
+  <h3>입찰 내역</h3>
+  <table id="bidsTable">
+    <thead>
+      <tr>
+        <th>상품명</th>
+        <th>입찰가</th>
+        <th>상태</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>내가 등록한 상품</h3>
+  <table id="myItemsTable">
+    <thead>
+      <tr>
+        <th>상품명</th>
+        <th>현재가</th>
+        <th>경매 상태</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <button class="btn-refresh" id="refreshBtn">새로고침</button>
+</div>
+
+<script>
+  const bidsTable = document.getElementById('bidsTable').querySelector('tbody');
+  const myItemsTable = document.getElementById('myItemsTable').querySelector('tbody');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  // 더미 데이터
+  const dummyBids = [
+    {item:'노트북', price:50000, status:'낙찰대기'},
+    {item:'스마트폰', price:20000, status:'입찰중'}
+  ];
+  const dummyMyItems = [
+    {item:'책상', currentPrice:30000, status:'경매중'},
+    {item:'의자', currentPrice:15000, status:'경매종료'}
+  ];
+
+  function renderTables(){
+    bidsTable.innerHTML = '';
+    dummyBids.forEach(b => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${b.item}</td><td>${b.price}</td><td>${b.status}</td>`;
+      bidsTable.appendChild(tr);
+    });
+
+    myItemsTable.innerHTML = '';
+    dummyMyItems.forEach(i => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i.item}</td><td>${i.currentPrice}</td><td>${i.status}</td>`;
+      myItemsTable.appendChild(tr);
+    });
+  }
+
+  renderTables();
+
+  refreshBtn.addEventListener('click',()=>{
+    // ⭐ 실제 API 연동 시 fetch() 호출
+    alert('데이터 새로고침 시뮬레이션 완료! (더미 데이터)');
+    renderTables();
+  });
+</script>
+</body>
+</html>
